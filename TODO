@@ -1,0 +1,5 @@
+- REGISTER FORM
+- adicionar nginx reverse proxy
+- adicionar docker image com o server front end boilerplate (simples native js)
+- ligar o redirect do server para o server front end
+- aplicar o que está no public form2 no frontend

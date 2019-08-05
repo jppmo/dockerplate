@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Oauth2 Example Part 2</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body class='container'>
+    <h1>Token</h1>
+    <button onclick='onClick()' class='btn btn-success'>Get Token</button>
+    <h1>Authentication</h1>
+    <p>Authorization Code: <span id='code'></span></p>
+    <p>Token: <span id='token'></span></p>
+    <button onclick='accessSecretArea()' class='btn btn-danger'>Access Secret Area</button>
+    <p>Success? <span id='success'></span></p>
+
+    <script>
+        let code
+        let token // TODO: DON'T STORE THE TOKEN ON THE CLIENT FRONT END!!! Put it in a session cookie or something to be more secure
+        let tokenType
+        const secret = 'browserTestSecret' // probs shouldn't be stored locally on the frontend
+        const id = 'browser'  // probs shouldn't be stored locally on the frontend
+            ; (function () { // We are immediately executing this anonymous function. The semi-colon is necessary
+                const urlParams = new URLSearchParams(window.location.search) // retrieve the authorization code from the url
+                code = urlParams.get('code')
+                document.getElementById('code').innerText = code
+            }())
+        function onClick() {
+            fetch('/oauth/token', {
+                method: 'POST',
+                body: `code=${code}&client_secret=${secret}&client_id=${id}&grant_type=authorization_code`, // this is how we send that data up
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',  // This is REALLY important
+                },
+            })
+                .then(res => res.json())
+                .then(res => {
+                    console.log('Credentials', res)
+                    token = res.access_token
+                    tokenType = res.token_type
+                    document.getElementById('token').innerText = token
+                })
+        }
+        function accessSecretArea() {
+            const authorization = `${tokenType} ${token}`
+            fetch('/users/', {
+                headers: new Headers({
+                    Authorization: authorization,
+                }),
+            })
+                .then(res => {
+                    document.getElementById('success').innerText = res.ok ? 'Oh yeah, baby!' : 'Nope.'
+                    return res.json();
+                }).then(res => console.log(res))
+                .catch(e => {
+                    console.error('Fail:', e)
+                    document.getElementById('success').innerText = 'Nope.'
+                })
+        }
+    </script>
+</body>
+
+</html>
