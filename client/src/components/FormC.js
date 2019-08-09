@@ -4,7 +4,7 @@ import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { Spinner } from 'reactstrap';
 // DatePicker
 import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 // Test: API Calls
 import { diaryAPI } from '../APIDummy/index';
 
@@ -37,7 +37,7 @@ class FormC extends Component {
             formConfig: formConfig,
             isSubmitting: false,
             isBtnDisabled: true,
-        }
+        };
 
         this.onChange = this.onChange.bind(this);
         this.submit = this.submit.bind(this);
@@ -47,19 +47,19 @@ class FormC extends Component {
     onChange (e) {
         let objModel = this.state.objModel;
         e.target ? objModel[e.target.name] = e.target.value : console.error('No such \'e.target\'!'); 
-        this.setState({ objModel: objModel, isBtnDisabled: false })
+        this.setState({ objModel: objModel, isBtnDisabled: false });
     }
 
     // Submit Model
     submit () {
-        this.setState({ isSubmitting: true })
+        this.setState({ isSubmitting: true });
         diaryAPI('addDiaryEntryByUserId', this.state.objModel).then(resp => {
             console.info(resp);
             this.props.toggle();
         })
         .catch(error => {
             console.info(error);
-            this.setState({ isSubmitting: false })
+            this.setState({ isSubmitting: false });
         });
     }
 
@@ -138,6 +138,6 @@ const FormG = (props) => {
                 </FormGroup>
             );
     }
-}
+};
 
 export default FormC;
